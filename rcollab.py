@@ -33,14 +33,20 @@ def collabr(namespace, project_name, branch, file_path):
 
     file_container = git.getfile(project_id=project_info['id'], file_path=file_path, ref=branch)
     file_content = b64decode(file_container['content'])
-    issues = git.getall(git.getprojectissues, project_id=project_info['id'])
+    issues = git.getall(git.getprojectissues, project_id=project_info['id'], state='opened')
 
     sections = re.findall(r'\\((?:sub)*section|paragraph)\*?(\[\w+\])*{(.*?)}', file_content)
     identifiers = [section[1] for section in sections if section[1] != '']
     missing_count = len(sections) - len(identifiers)
     random_identifiers = get_random_identifiers(identifiers, missing_count)
 
-    return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, commit_id=file_container['commit_id'], sections=sections, missing_count=missing_count, random_identifiers=random_identifiers)
+    sections_extended = []
+
+    for section in sections:
+        section_issues = [issue for issue in issues if (section[1] in issue['title'])]
+        sections_extended.append((section[0], section[1], section[2], section_issues, len(section_issues) == 0))
+
+    return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, commit_id=file_container['commit_id'], sections_extended=sections_extended, missing_count=missing_count, random_identifiers=random_identifiers)
 
 if __name__ == "__main__":
     app.run(debug=True)
