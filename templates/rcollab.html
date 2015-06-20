@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <style>
+    .identifier { font-family: Courier; }
     .section { }
     .subsection { text-indent: 2em; }
     .subsubsection { text-indent: 4em; }
@@ -14,7 +15,7 @@
     <h4>{{ file_path }} <small>{{ commit_id }}</small></h4>
     <table class="table table-bordered">
         {% if missing_count > 0 %}
-        <p>Oops. Looks like you're missing {{ missing_count }} section identifiers. Here's some fun ones: <pre>{{ random_identifiers|join('\n') }}</pre></p>
+        <p>Oops. Looks like you're {{ missing_count }} section identifier(s). Here's some fun ones: <pre>{{ random_identifiers|join('\n') }}</pre></p>
         {% endif %}
         <thead>
             <tr>
@@ -26,7 +27,7 @@
         <tbody>
             {% for section in sections %}
             <tr>
-                <th>{{ section[1] }}</th>
+                <th class="identifier">{{ section[1] }}</th>
                 <td class="{{ section[0] }}">{{ section[2] }}</td>
                 <td></td>
             </tr>
