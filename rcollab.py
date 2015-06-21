@@ -72,7 +72,12 @@ def collabr(namespace, project_name, branch, file_path):
 
     for i, section in enumerate(sections):
         section_issues = issues[section[1]] if section[1] in issues else []
-        sections[i] = (section[0], section[1], section[2], section_issues, len([x for x in section_issues if x['state'] == 'opened']) == 0)
+        section_coloring = 'success'
+
+        if len([x for x in section_issues if x['state'] == 'opened']) != 0:
+            section_coloring = 'danger'
+
+        sections[i] = (section[0], section[1], section[2], section_issues, section_coloring)
 
     return render_template('rcollab.html', branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections=sections, missing_count=len(random_identifiers), random_identifiers=random_identifiers)
 
