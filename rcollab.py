@@ -52,7 +52,7 @@ def collabr(namespace, project_name, branch, file_path):
     sections_extended = []
 
     for section in sections:
-        section_issues = [cleanup_issue(issue, section[1]) for issue in issues if (section[1] in issue['title'])]
+        section_issues = [cleanup_issue(issue, section[1]) for issue in issues if (section[1] != '' and section[1] in issue['title'])]
         section_issues.sort(key = lambda issue: issue['iid'])
         sections_extended.append((section[0], section[1], section[2], section_issues, len(section_issues) == 0))
 
