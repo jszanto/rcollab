@@ -48,6 +48,9 @@ def get_issues(git, project_info):
 def authenticate():
     return Response('...', 401, {'WWW-Authenticate': 'Basic realm="Login with Gitlab details."'})
 
+def get_header_level(t):
+    return ['section', 'subsection', 'subsubsection', 'paragraph', ''].index(t)
+
 @app.route("/<namespace>/<project_name>/<branch>/<path:file_path>")
 def collabr(namespace, project_name, branch, file_path):
     git = Gitlab(config.GITLAB_SERVER)
@@ -70,12 +73,21 @@ def collabr(namespace, project_name, branch, file_path):
     issues = get_issues(git, project_info)
     random_identifiers = get_random_identifiers(sections)
 
+    is_parent_done = ('', True)
+
     for i, section in enumerate(sections):
         section_issues = issues[section[1]] if section[1] in issues else []
         section_coloring = 'success'
 
         if len([x for x in section_issues if x['state'] == 'opened']) != 0:
             section_coloring = 'danger'
+
+        if get_header_level(section[0]) <= get_header_level(is_parent_done[0]):
+            is_parent_done = (section[0], section_coloring == 'success')
+
+        if not is_parent_done[1]:
+            if section_coloring != 'danger':
+                section_coloring = 'warning'
 
         sections[i] = (section[0], section[1], section[2], section_issues, section_coloring)
 
