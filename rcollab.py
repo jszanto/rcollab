@@ -22,32 +22,38 @@ def cleanup_issue(issue, identifier):
 def get_random_identifier():
     return ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(4))
 
-def get_random_identifiers(identifiers, missing_count):
+def get_random_identifiers(sections):
+    current_identifiers = [section[1] for section in sections if section[1] != '']
+    missing_count = len(sections) - len(current_identifiers)
+
     random_identifiers = []
 
     while len(random_identifiers) < missing_count:
         x = get_random_identifier()
 
-        if (x not in random_identifiers) and (x not in identifiers):
+        if (x not in random_identifiers) and (x not in current_identifiers):
             random_identifiers.append(x)
 
     return random_identifiers
+
+def get_sections(file_content):
+    return re.findall(r'[^%]\\((?:sub)*section|paragraph)\*?(\[\w+\])*{(.*?)}', file_content)
+
+def get_issues(git, project_info):
+    issues = git.getall(git.getprojectissues, project_id=project_info['id'])
+    return [issue for issue in issues]
 
 @app.route("/<namespace>/<project_name>/<branch>/<path:file_path>")
 def collabr(namespace, project_name, branch, file_path):
     git = Gitlab(config.GITLAB_SERVER, token=config.GITLAB_TOKEN)
 
     project_info = git.getproject(namespace + '/' + project_name)
-
     file_container = git.getfile(project_id=project_info['id'], file_path=file_path, ref=branch)
     file_content = b64decode(file_container['content'])
-    issues = git.getall(git.getprojectissues, project_id=project_info['id'])
-    issues = [issue for issue in issues] # need a copy because otherwise we can only iterate once
 
-    sections = re.findall(r'[^%]\\((?:sub)*section|paragraph)\*?(\[\w+\])*{(.*?)}', file_content)
-    identifiers = [section[1] for section in sections if section[1] != '']
-    missing_count = len(sections) - len(identifiers)
-    random_identifiers = get_random_identifiers(identifiers, missing_count)
+    sections = get_sections(file_content)
+    issues = get_issues(git, project_info)
+    random_identifiers = get_random_identifiers(sections)
 
     sections_extended = []
 
@@ -56,7 +62,7 @@ def collabr(namespace, project_name, branch, file_path):
         section_issues.sort(key = lambda issue: issue['iid'])
         sections_extended.append((section[0], section[1], section[2], section_issues, len([x for x in section_issues if x['state'] == 'opened']) == 0))
 
-    return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections_extended=sections_extended, missing_count=missing_count, random_identifiers=random_identifiers)
+    return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections_extended=sections_extended, missing_count=len(random_identifiers), random_identifiers=random_identifiers)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=38711)
