@@ -27,7 +27,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for section in sections_extended %}
+            {% for section in sections %}
             <tr>
                 <td class="identifier {% if section[4] %} success {% else %} danger {% endif %}"><a target="_blank" href="{{project_info.web_url}}/issues/new?issue[title]={{section[1]}}%20">{{ section[1] }}</a></td>
                 <td class="{{ section[0] }}">{{ section[2] }}</td>
@@ -35,7 +35,7 @@
                 <td class="issues">
                     {% for section_issue in section[3] %}
                     {% if section_issue.state == 'closed' %} <strike> {% endif %}
-                    <h5>#{{ section_issue.iid }} <a target="_blank" href="{{project_info.web_url}}/issues/{{section_issue.iid}}">{{ section_issue.title }}</a> <small>{{ section_issue.assignee.name }}</small></h5>
+                    <h5><a target="_blank" href="{{project_info.web_url}}/issues/{{section_issue.iid}}">#{{ section_issue.iid }}</a> {{ section_issue.title }} <small>{{ section_issue.assignee.name }}</small></h5>
                     <p><small>{{ section_issue.description }}</small></p>
                     {% if section_issue.state == 'closed' %} </strike> {% endif %}
                     {% endfor %}
