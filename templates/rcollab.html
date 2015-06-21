@@ -29,12 +29,12 @@
         <tbody>
             {% for section in sections_extended %}
             <tr>
-                <td class="identifier {% if section[4] %} success {% else %} danger {% endif %}"><a href="{{project_info.web_url}}/issues/new?issue[title]={{section[1]}}%20">{{ section[1] }}</a></td>
+                <td class="identifier {% if section[4] %} success {% else %} danger {% endif %}"><a target="_blank" href="{{project_info.web_url}}/issues/new?issue[title]={{section[1]}}%20">{{ section[1] }}</a></td>
                 <td class="{{ section[0] }}">{{ section[2] }}</td>
 
                 <td class="issues">
                     {% for section_issue in section[3] %}
-                    <h5><a href="{{project_info.web_url}}/issues/{{section_issue.iid}}">{{ section_issue.title }}</a> <small>{{ section_issue.assignee.name }}</small></h5>
+                    <h5><a target="_blank" href="{{project_info.web_url}}/issues/{{section_issue.iid}}">{{ section_issue.title }}</a> <small>{{ section_issue.assignee.name }}</small></h5>
                     <small>{{ section_issue.description }}</small>
                     {% endfor %}
                 </td>
