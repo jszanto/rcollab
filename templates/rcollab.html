@@ -34,8 +34,10 @@
 
                 <td class="issues">
                     {% for section_issue in section[3] %}
+                    {% if section_issue.state == 'closed' %} <strike> {% endif %}
                     <h5>{{ section_issue.iid }} <a target="_blank" href="{{project_info.web_url}}/issues/{{section_issue.iid}}">{{ section_issue.title }}</a> <small>{{ section_issue.assignee.name }}</small></h5>
                     <p><small>{{ section_issue.description }}</small></p>
+                    {% if section_issue.state == 'closed' %} </strike> {% endif %}
                     {% endfor %}
                 </td>
             </tr>

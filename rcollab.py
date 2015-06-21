@@ -41,7 +41,7 @@ def collabr(namespace, project_name, branch, file_path):
 
     file_container = git.getfile(project_id=project_info['id'], file_path=file_path, ref=branch)
     file_content = b64decode(file_container['content'])
-    issues = git.getall(git.getprojectissues, project_id=project_info['id'], state='opened')
+    issues = git.getall(git.getprojectissues, project_id=project_info['id'])
     issues = [issue for issue in issues] # need a copy because otherwise we can only iterate once
 
     sections = re.findall(r'\\((?:sub)*section|paragraph)\*?(\[\w+\])*{(.*?)}', file_content)
