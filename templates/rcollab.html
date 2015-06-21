@@ -9,7 +9,6 @@
     .paragraph { text-indent: 6em; }
     .issues { width: 50%; }
     .issues h5 { margin: 0; }
-    .badge { font-size: 75%; }
 </style>
 
 <div class="container">
@@ -42,13 +41,13 @@
                         <small>{{ section_issue.assignee.name }}</small>
                         {% if section_issue.milestone %}
                         <a target="_blank" href="{{project_info.web_url}}/milestones/{{section_issue.milestone.iid}}">
-                        <span class="badge">
-                            {% if section_issue.milestone.due_date %}
-                            {{ section_issue.milestone.due_date }}
-                            {% else %}
-                            ...
-                            {% endif %}
-                        </span>
+                            <span class="label label-default">
+                                {% if section_issue.milestone.due_date %}
+                                {{ section_issue.milestone.due_date }}
+                                {% else %}
+                                ...
+                                {% endif %}
+                            </span>
                         </a>
                         {% endif %}
                     </h5>
