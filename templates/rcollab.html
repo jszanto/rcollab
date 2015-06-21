@@ -17,7 +17,7 @@
     <h4>{{ file_path }} <small>{{ commit_id }}</small></h4>
     <table class="table table-bordered">
         {% if missing_count > 0 %}
-        <p>Oops. Looks like you're {{ missing_count }} section identifier(s). Here's some fun ones: <pre>{{ random_identifiers|join('\n') }}</pre></p>
+        <p>Oops. Looks like you're missing {{ missing_count }} section identifier(s). Here's some fun ones: <pre>{{ random_identifiers|join('\n') }}</pre></p>
         {% endif %}
         <thead>
             <tr>

@@ -59,4 +59,4 @@ def collabr(namespace, project_name, branch, file_path):
     return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections_extended=sections_extended, missing_count=missing_count, random_identifiers=random_identifiers)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=38711)
