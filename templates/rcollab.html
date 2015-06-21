@@ -34,7 +34,7 @@
 
                 <td class="issues">
                     {% for section_issue in section[3] %}
-                    <h5><a target="_blank" href="{{project_info.web_url}}/issues/{{section_issue.iid}}">{{ section_issue.title }}</a> <small>{{ section_issue.assignee.name }}</small></h5>
+                    <h5>{{ section_issue.iid }} <a target="_blank" href="{{project_info.web_url}}/issues/{{section_issue.iid}}">{{ section_issue.title }}</a> <small>{{ section_issue.assignee.name }}</small></h5>
                     <p><small>{{ section_issue.description }}</small></p>
                     {% endfor %}
                 </td>
