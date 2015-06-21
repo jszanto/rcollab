@@ -1,0 +1,2 @@
+GITLAB_SERVER = ""
+GITLAB_TOKEN = "" # Profile > Account settings > Private token
