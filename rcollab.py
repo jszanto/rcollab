@@ -2,8 +2,7 @@ import re
 import random
 import string
 
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template, request, Response
 from gitlab import Gitlab
 from base64 import b64decode
 
@@ -46,9 +45,22 @@ def get_issues(git, project_info):
 
     return result
 
+def authenticate():
+    return Response('...', 401, {'WWW-Authenticate': 'Basic realm="Login with Gitlab details."'})
+
 @app.route("/<namespace>/<project_name>/<branch>/<path:file_path>")
 def collabr(namespace, project_name, branch, file_path):
-    git = Gitlab(config.GITLAB_SERVER, token=config.GITLAB_TOKEN)
+    git = Gitlab(config.GITLAB_SERVER)
+
+    auth = request.authorization
+
+    if not auth:
+        return authenticate()
+
+    try:
+        git.login(auth.username, auth.password)
+    except: # should be more specific here
+        return authenticate()
 
     project_info = git.getproject(namespace + '/' + project_name)
     file_container = git.getfile(project_id=project_info['id'], file_path=file_path, ref=branch)
