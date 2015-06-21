@@ -13,6 +13,10 @@ app = Flask(__name__)
 
 def cleanup_issue(issue, identifier):
     issue['title'] = issue['title'].replace(identifier, '').strip()
+
+    if issue['title'] == '':
+        issue['title'] = '-'
+
     return issue
 
 def get_random_identifier():
