@@ -11,6 +11,10 @@ import config
 
 app = Flask(__name__)
 
+def cleanup_issue(issue, identifier):
+    issue['title'] = issue['title'].replace(identifier, '').strip()
+    return issue
+
 def get_random_identifier():
     return ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(4))
 
@@ -43,7 +47,7 @@ def collabr(namespace, project_name, branch, file_path):
     sections_extended = []
 
     for section in sections:
-        section_issues = [issue for issue in issues if (section[1] in issue['title'])]
+        section_issues = [cleanup_issue(issue, section[1]) for issue in issues if (section[1] in issue['title'])]
         sections_extended.append((section[0], section[1], section[2], section_issues, len(section_issues) == 0))
 
     return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, commit_id=file_container['commit_id'], sections_extended=sections_extended, missing_count=missing_count, random_identifiers=random_identifiers)

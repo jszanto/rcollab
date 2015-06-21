@@ -33,7 +33,7 @@
                 <td>
                     {% for section_issue in section[3] %}
                     <h5>{{ section_issue.title }} <small>{{ section_issue.assignee.name }}</small></h5>
-                    {{ section_issue.description }}
+                    <small>{{ section_issue.description }}</small>
                     {% endfor %}
                 </td>
             </tr>
