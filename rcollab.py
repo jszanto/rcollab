@@ -2,6 +2,7 @@ import re
 import random
 import string
 
+from time import strptime, strftime
 from flask import Flask, render_template, request, Response
 from gitlab import Gitlab
 from base64 import b64decode
@@ -40,6 +41,12 @@ def get_issues(git, project_info):
 
         if x != None:
             issue['title'] = x.group(2)
+
+            if issue['milestone'] != None:
+                if issue['milestone']['due_date'] != None:
+                    due_date = strptime(issue['milestone']['due_date'], '%Y-%m-%d')
+                    issue['milestone']['due_date'] = strftime('%d-%m-%Y', due_date)
+
             result.setdefault(x.group(1), []).append(issue)
             result[x.group(1)].sort(key = lambda issue: issue['iid'])
 
