@@ -50,7 +50,7 @@ def collabr(namespace, project_name, branch, file_path):
         section_issues = [cleanup_issue(issue, section[1]) for issue in issues if (section[1] in issue['title'])]
         sections_extended.append((section[0], section[1], section[2], section_issues, len(section_issues) == 0))
 
-    return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, commit_id=file_container['commit_id'], sections_extended=sections_extended, missing_count=missing_count, random_identifiers=random_identifiers)
+    return render_template('rcollab.html', project_name=project_name, branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections_extended=sections_extended, missing_count=missing_count, random_identifiers=random_identifiers)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,11 +2,12 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <style>
     h5 { margin: 0; }
-    .identifier { font-family: Courier; }
+    .identifier { width: 1em; font-size: 82.5%; font-family: Courier; }
     .section { }
     .subsection { text-indent: 2em; }
     .subsubsection { text-indent: 4em; }
     .paragraph { text-indent: 6em; }
+    .issues { width: 50%; }
 </style>
 
 <div class="container">
@@ -30,9 +31,10 @@
             <tr>
                 <td class="identifier {% if section[4] %} success {% else %} danger {% endif %}">{{ section[1] }}</td>
                 <td class="{{ section[0] }}">{{ section[2] }}</td>
-                <td>
+
+                <td class="issues">
                     {% for section_issue in section[3] %}
-                    <h5>{{ section_issue.title }} <small>{{ section_issue.assignee.name }}</small></h5>
+                    <h5><a href="{{project_info.web_url}}/issues/{{section_issue.iid}}">{{ section_issue.title }}</a> <small>{{ section_issue.assignee.name }}</small></h5>
                     <small>{{ section_issue.description }}</small>
                     {% endfor %}
                 </td>
