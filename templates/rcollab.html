@@ -12,9 +12,9 @@
 
 <div class="container">
     <header class="page-header">
-        <h1>{{ project_name }} <small>{{ branch }}</small></h1>
+        <h1>{{ project_info.path }} <small>{{ branch }}</small></h1>
     </header>
-    <h4>{{ file_path }} <small>{{ commit_id }}</small></h4>
+    <h4><a target="_blank" href="{{ project_info.web_url }}/tree/{{ branch }}/{{ file_path }}">{{ file_path }}</a> <small>{{ commit_id }}</small></h4>
     <table class="table table-bordered">
         {% if missing_count > 0 %}
         <p>Oops. Looks like you're missing {{ missing_count }} section identifier(s). Here's some fun ones: <pre>{{ random_identifiers|join('\n') }}</pre></p>
