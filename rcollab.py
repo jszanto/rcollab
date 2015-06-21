@@ -44,7 +44,7 @@ def collabr(namespace, project_name, branch, file_path):
     issues = git.getall(git.getprojectissues, project_id=project_info['id'])
     issues = [issue for issue in issues] # need a copy because otherwise we can only iterate once
 
-    sections = re.findall(r'\\((?:sub)*section|paragraph)\*?(\[\w+\])*{(.*?)}', file_content)
+    sections = re.findall(r'[^%]\\((?:sub)*section|paragraph)\*?(\[\w+\])*{(.*?)}', file_content)
     identifiers = [section[1] for section in sections if section[1] != '']
     missing_count = len(sections) - len(identifiers)
     random_identifiers = get_random_identifiers(identifiers, missing_count)
