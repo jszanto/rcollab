@@ -29,7 +29,19 @@ def get_random_identifiers(sections):
     return random_identifiers
 
 def get_sections(file_content):
-    return re.findall(r'[^%]\\((?:sub)*section|paragraph)\*?(\[\w+\])*{(.*?)}', file_content)
+    lines=[x for x in file_content.splitlines() if re.match(r'\\(?:(?:sub)*section|paragraph).*?{.*?}',x)]
+    sections = []
+    for line in lines:
+            type = re.search(r'((?:sub)*section|paragraph).*?', line).group(1)
+            name = re.search(r'{(.*?)}', line).group(1)
+            id_found = re.search(r'(\[\w+\])', line)
+            if id_found:
+                id = id_found.group(1)
+            else:
+                id = ''
+            sections.append((type, id, name))
+
+    return sections
 
 def get_issues(git, project_info):
     issues = git.getall(git.getprojectissues, project_id=project_info['id'])
