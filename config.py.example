@@ -1,1 +1,12 @@
-GITLAB_SERVER = ""
+GITLAB_SERVER = 'git.example.com'
+
+# Oauth2 tokens from Gitlab
+APP_ID = ''
+APP_SECRET = ''
+
+# The url at which this rcollab instance is hosted
+# Als add RCOLLAB_URI+auth to your Gitlab app's callback URIs
+RCOLLAB_URI = 'http://rcollab.example.com/'
+
+# This can be any random string of data, e.g. head -c 32 /dev/urandom
+SESSION_SECRET = ''
