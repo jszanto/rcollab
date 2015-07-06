@@ -3,6 +3,7 @@ import random
 import string
 import requests
 import json
+import sys
 
 from time import strptime, strftime
 from flask import Flask, session, render_template, request, redirect, Response
@@ -130,6 +131,31 @@ def collabr(namespace, project_name, branch, file_path):
     except: # should be more specific here
         return authenticate()
 
+def get_project_files(git, project_id, path):
+    files = []
+    tree = git.getrepositorytree(project_id, path=path)
+    print path
+    for file in tree:
+        print file['name']
+        if file['type'] == 'tree':
+            files.extend(get_project_files(git, project_id, path + file['name'] + '/'))
+        elif file['name'][-4:] == '.tex':
+            files.append(path + file['name'])
+    return files
+
+@app.route("/<namespace>/<project_name>/")
+def project(namespace, project_name):
+    git = get_git()
+
+    if git == False:
+        return authenticate()
+
+    try:
+        project_info = git.getproject(namespace + '/' + project_name)
+        return render_template('project.html', files=get_project_files(git, project_info['id'], ''))
+    except:
+        return authenticate()
+
 @app.route("/")
 def index():
     git = get_git()
@@ -138,7 +164,7 @@ def index():
         return authenticate()
 
     try:
-        projects=git.getprojects(page=1, per_page=100)
+        projects=git.getall(git.getprojects)
         return render_template('index.html', projects=projects)
 
     except:
@@ -146,4 +172,4 @@ def index():
 
 if __name__ == "__main__":
     app.secret_key = config.SESSION_SECRET
-    app.run(host='0.0.0.0', port=38711)
+    app.run(debug=True, host='0.0.0.0', port=38711)
