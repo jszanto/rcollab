@@ -84,11 +84,17 @@ def oauth():
 def get_header_level(t):
     return ['section', 'subsection', 'subsubsection', 'paragraph', ''].index(t)
 
+def get_git():
+    if 'auth' in session:
+      return Gitlab(config.GITLAB_SERVER, oauth_token=session['auth'])
+    else:
+       return False
+
 @app.route("/<namespace>/<project_name>/<branch>/<path:file_path>")
 def collabr(namespace, project_name, branch, file_path):
-    git = Gitlab(config.GITLAB_SERVER) 
+    git = get_git()
     
-    if 'auth' not in session:
+    if git == False:
         return authenticate()
 
     try:
@@ -122,6 +128,20 @@ def collabr(namespace, project_name, branch, file_path):
 
         return render_template('rcollab.html', branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections=sections, missing_count=len(random_identifiers), random_identifiers=random_identifiers)
     except: # should be more specific here
+        return authenticate()
+
+@app.route("/")
+def index():
+    git = get_git()
+
+    if git == False:
+        return authenticate()
+
+    try:
+        projects=git.getprojects(page=1, per_page=100)
+        return render_template('index.html', projects=projects)
+
+    except:
         return authenticate()
 
 if __name__ == "__main__":

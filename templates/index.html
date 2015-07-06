@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="/static/bootstrap.min.css">
+<link rel="stylesheet" href="/static/bootstrap-theme.min.css">
+<a href="https://github.com/svenvanheugten/rcollab"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+<style type="text/css">
+    .identifier { width: 1em; font-size: 82.5%; font-family: Courier; }
+    .section { }
+    .subsection { text-indent: 2em; }
+    .subsubsection { text-indent: 4em; }
+    .paragraph { text-indent: 6em; }
+    .issues { width: 50%; }
+    .issues h5 { margin: 0; }
+</style>
+
+<div class="container">
+    <header class="page-header">
+       
+        <ul>
+            {% for project in projects %}
+            
+              <li><a href="{{ projects['path_with_namespace'] }}">{{ project['name_with_namespace'] }}</a></li>
+            
+            {% endfor %}
+        </ul>
+   
+</div>
