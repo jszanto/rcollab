@@ -1,9 +1,11 @@
 import re
 import random
 import string
+import requests
+import json
 
 from time import strptime, strftime
-from flask import Flask, render_template, request, Response
+from flask import Flask, session, render_template, request, redirect, Response
 from gitlab import Gitlab
 from base64 import b64decode
 
@@ -65,52 +67,62 @@ def get_issues(git, project_info):
     return result
 
 def authenticate():
-    return Response('...', 401, {'WWW-Authenticate': 'Basic realm="Login with Gitlab details."'})
+    session['last_url'] = request.url
+    return redirect('https://' + config.GITLAB_SERVER + '/oauth/authorize?client_id=' + config.APP_ID + '&redirect_uri=' + config.RCOLLAB_URI + 'oauth&response_type=code')
+
+@app.route("/oauth")
+def oauth():
+    code = request.args.get('code', '')
+    payload = {'client_id': config.APP_ID, 'client_secret': config.APP_SECRET, 'code': code, 'grant_type': 'authorization_code', 'redirect_uri': config.RCOLLAB_URI + 'oauth'}
+    r = requests.post('https://' + config.GITLAB_SERVER + '/oauth/token', data=payload)
+    session['auth'] = r.json().get('access_token')
+    if 'last_url' in session:
+        return redirect(session['last_url'])
+    else:
+        return redirect(config.RCOLLAB_URI)
 
 def get_header_level(t):
     return ['section', 'subsection', 'subsubsection', 'paragraph', ''].index(t)
 
 @app.route("/<namespace>/<project_name>/<branch>/<path:file_path>")
 def collabr(namespace, project_name, branch, file_path):
-    git = Gitlab(config.GITLAB_SERVER)
-
-    auth = request.authorization
-
-    if not auth:
+    git = Gitlab(config.GITLAB_SERVER) 
+    
+    if 'auth' not in session:
         return authenticate()
 
     try:
-        git.login(auth.username, auth.password)
+        git = Gitlab(config.GITLAB_SERVER, oauth_token=session['auth'])
+    
+        project_info = git.getproject(namespace + '/' + project_name)
+        file_container = git.getfile(project_id=project_info['id'], file_path=file_path, ref=branch)
+        file_content = b64decode(file_container['content'])
+
+        sections = get_sections(file_content)
+        issues = get_issues(git, project_info)
+        random_identifiers = get_random_identifiers(sections)
+
+        is_parent_done = ('', True)
+
+        for i, section in enumerate(sections):
+            section_issues = issues[section[1]] if section[1] in issues else []
+            section_coloring = 'success'
+
+            if len([x for x in section_issues if x['state'] == 'opened']) != 0:
+                section_coloring = 'danger'
+
+            if get_header_level(section[0]) <= get_header_level(is_parent_done[0]):
+                is_parent_done = (section[0], section_coloring == 'success')
+
+            if not is_parent_done[1]:
+                if section_coloring != 'danger':
+                    section_coloring = 'warning'
+
+            sections[i] = (section[0], section[1], section[2], section_issues, section_coloring)
+
+        return render_template('rcollab.html', branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections=sections, missing_count=len(random_identifiers), random_identifiers=random_identifiers)
     except: # should be more specific here
         return authenticate()
-
-    project_info = git.getproject(namespace + '/' + project_name)
-    file_container = git.getfile(project_id=project_info['id'], file_path=file_path, ref=branch)
-    file_content = b64decode(file_container['content'])
-
-    sections = get_sections(file_content)
-    issues = get_issues(git, project_info)
-    random_identifiers = get_random_identifiers(sections)
-
-    is_parent_done = ('', True)
-
-    for i, section in enumerate(sections):
-        section_issues = issues[section[1]] if section[1] in issues else []
-        section_coloring = 'success'
-
-        if len([x for x in section_issues if x['state'] == 'opened']) != 0:
-            section_coloring = 'danger'
-
-        if get_header_level(section[0]) <= get_header_level(is_parent_done[0]):
-            is_parent_done = (section[0], section_coloring == 'success')
-
-        if not is_parent_done[1]:
-            if section_coloring != 'danger':
-                section_coloring = 'warning'
-
-        sections[i] = (section[0], section[1], section[2], section_issues, section_coloring)
-
-    return render_template('rcollab.html', branch=branch, file_path=file_path, project_info=project_info, commit_id=file_container['commit_id'], sections=sections, missing_count=len(random_identifiers), random_identifiers=random_identifiers)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=38711)
