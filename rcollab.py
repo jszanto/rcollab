@@ -134,9 +134,7 @@ def collabr(namespace, project_name, branch, file_path):
 def get_project_files(git, project_id, path):
     files = []
     tree = git.getrepositorytree(project_id, path=path)
-    print path
     for file in tree:
-        print file['name']
         if file['type'] == 'tree':
             files.extend(get_project_files(git, project_id, path + file['name'] + '/'))
         elif file['name'][-4:] == '.tex':
@@ -172,4 +170,4 @@ def index():
 
 if __name__ == "__main__":
     app.secret_key = config.SESSION_SECRET
-    app.run(debug=True, host='0.0.0.0', port=38711)
+    app.run(host='0.0.0.0', port=38711)
