@@ -125,4 +125,5 @@ def collabr(namespace, project_name, branch, file_path):
         return authenticate()
 
 if __name__ == "__main__":
+    app.secret_key = config.SESSION_SECRET
     app.run(host='0.0.0.0', port=38711)
