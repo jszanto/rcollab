@@ -152,7 +152,7 @@ def project(namespace, project_name):
 
     try:
         project_info = git.getproject(namespace + '/' + project_name)
-        return render_template('project.html', files=get_project_files(git, project_info['id'], ''))
+        return render_template('project.html', files=get_project_files(git, project_info['id'], ''), project_info=project_info)
     except:
         return authenticate()
 

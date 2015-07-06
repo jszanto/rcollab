@@ -12,12 +12,15 @@
 </style>
 
 <div class="container">       
-        <ul>
-            {% for file in files %}
-            
-              <li><a href="{{ file }}">{{ file }}</a></li>
-            
-            {% endfor %}
-        </ul>
+    <header class="page-header">
+        <h1>{{ project_info.path }}</h1>
+    </header>
+    <ul>
+        {% for file in files %}
+        
+          <li><a href="master/{{ file }}">{{ file }}</a></li>
+           
+        {% endfor %}
+    </ul>
    
 </div>

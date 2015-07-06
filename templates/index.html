@@ -11,15 +11,14 @@
     .issues h5 { margin: 0; }
 </style>
 
-<div class="container">
+<div class="container">       
     <header class="page-header">
-       
-        <ul>
-            {% for project in projects %}
-            
+        <h1>Projects</h1>
+    </header>
+    <ul>
+        {% for project in projects %}
               <li><a href="{{ projects['path_with_namespace'] }}">{{ project['name_with_namespace'] }}</a></li>
             
-            {% endfor %}
-        </ul>
-   
+        {% endfor %}
+    </ul>
 </div>
