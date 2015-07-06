@@ -17,7 +17,7 @@
     </header>
     <ul>
         {% for project in projects %}
-              <li><a href="{{ projects['path_with_namespace'] }}">{{ project['name_with_namespace'] }}</a></li>
+              <li><a href="{{ project['path_with_namespace'] }}">{{ project['name_with_namespace'] }}</a></li>
             
         {% endfor %}
     </ul>
